@@ -1,0 +1,53 @@
+{% extends 'blog/base.html' %}
+{% block content %}
+<div class="container">
+    {% if post.id %}
+    <br><br><br>
+        <h2 style="color:skyblue;"> [{{ post.code }}]</h2>
+
+    {% endif %}
+    <br>
+    <h1 style="font-weight:bold"> 상품명 [{{ post.name }}]</h1>
+    {% if post.image %}
+
+        <img src="{{ post.image.url }}" width="400">
+
+    {% endif %}
+    <p style="font-weight:bold;color:crimson">희망소비자가격 \{{ post.charge }}</p>
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <ul>
+        {% for choice in post.choice_set.all %}
+            <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+        {% endfor %}
+    </ul>
+    
+    <form action="{% url 'main:vote' post.code %}" method="POST"> <!--submit을 눌렀을 때 해당 url로 넘어감-->
+        {% csrf_token %} <!--해킹 방지-->
+        {% for choice in post.choice_set.all %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}"> <!--submit을 누르면 value값이 넘어감-->
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+        <br>
+        <button type="submit" class="btn btn-dark" style="">투표하기</button>
+    </form>
+
+        <form action="{% url 'main:comments_create' post.pk %}" method="post">
+            {% csrf_token %}
+            <br>
+                  <input type="text" name="content"/>
+                  <button type="submit" class="btn btn-dark" style="">댓글달기</button>
+        </form>
+        <ul>
+            {% for comment in post.review_set.all %}
+                <span style="font-weight: bold;">└ {{ comment }}</span>    
+                <span>{{ comment.pub_date }}</span>
+                <a href="{% url 'main:comments_delete' post.pk comment.pk %}">Delete</a><br>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'main:home' %}">main으로 돌아가기</a>
+        
+</div>
+<br><br><br><br><br> <br><br><br><br> <br><br><br><br> <br><br><br><br>
+{% endblock %}
