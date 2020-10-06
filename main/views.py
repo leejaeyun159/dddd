@@ -127,7 +127,7 @@ def result(request):
             return render(request, 'result.html', {'result': result, 'bar_list':bar_list})
     else:
         form = Multi_Upload()
-    return render(request, 'upload_img.html', {'form': form})
+    return render(request, 'upload_img_total.html', {'form': form})
 
 
 
